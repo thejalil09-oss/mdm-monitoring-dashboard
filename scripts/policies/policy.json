@@ -1,0 +1,97 @@
+{
+  "name": "OrgLab MDM Baseline v1.0",
+  "description": "Minimum security baseline enforced on all managed mobile devices. Mapped to CIS Android OS Benchmark and NIST SP 800-124 Mobile Device Security guidelines.",
+  "author": "Sulemana Akuantu Abdul Jalil",
+  "authorIndex": "FCM.41.018.245.23",
+  "version": "1.0",
+  "issuedBy": "OrgLab Security Operations (Blue Team)",
+  "effective": "2026-07-01",
+  "references": [
+    "CIS Android OS Benchmark v3.x - 4.x Device Access Control",
+    "NIST SP 800-124 Rev 2 Guidelines for Managing the Security of Mobile Devices in the Enterprise",
+    "OWASP MASTG - Mobile App Security Testing Guide",
+    "Android Enterprise Security White Paper 2023"
+  ],
+  "rules": [
+    {
+      "id": "screen-lock-enabled",
+      "title": "Screen lock is configured",
+      "severity": "critical",
+      "weight": 20,
+      "expected": "A PIN, password or pattern is set (password_type != 0)",
+      "probe": "locksettings.db lockscreen.password_type",
+      "baseline": "CIS 4.0 Device Access Control",
+      "remediation": "adb shell locksettings set-pin <PIN>"
+    },
+    {
+      "id": "screen-lock-timeout",
+      "title": "Auto-lock timeout <= 60 seconds",
+      "severity": "high",
+      "weight": 15,
+      "expected": "max(screen_off_timeout, lock_after_timeout) <= 60000 ms",
+      "probe": "settings screen_off_timeout / lock_screen_lock_after_timeout",
+      "baseline": "CIS 4.1 Lock Screen Timeout",
+      "remediation": "adb shell settings put system screen_off_timeout 30000"
+    },
+    {
+      "id": "encryption",
+      "title": "Device storage is encrypted",
+      "severity": "critical",
+      "weight": 20,
+      "expected": "ro.crypto.state == encrypted (full-disk/file-based)",
+      "probe": "getprop ro.crypto.state",
+      "baseline": "NIST SP 800-124 / CIS 2.0 Encryption",
+      "remediation": "Enforce via device admin 'require encryption' policy"
+    },
+    {
+      "id": "usb-debugging",
+      "title": "USB debugging is disabled",
+      "severity": "high",
+      "weight": 15,
+      "expected": "adb_enabled == 0",
+      "probe": "settings get global adb_enabled",
+      "baseline": "CIS 4.3 USB Debugging / NIST 800-124",
+      "remediation": "adb shell settings put global adb_enabled 0"
+    },
+    {
+      "id": "unknown-sources",
+      "title": "Installation from unknown sources is blocked",
+      "severity": "high",
+      "weight": 10,
+      "expected": "install_non_market_apps == 0 and ADB installs verified",
+      "probe": "settings get secure install_non_market_apps",
+      "baseline": "CIS 4.5 Unknown Sources",
+      "remediation": "adb shell settings put secure install_non_market_apps 0"
+    },
+    {
+      "id": "verify-apps",
+      "title": "App verification (Play Protect) is enabled",
+      "severity": "medium",
+      "weight": 5,
+      "expected": "package_verifier_enable == 1",
+      "probe": "settings get global package_verifier_enable",
+      "baseline": "CIS 4.6 Verify Apps",
+      "remediation": "adb shell settings put global package_verifier_enable 1"
+    },
+    {
+      "id": "camera-restricted",
+      "title": "Camera application is restricted",
+      "severity": "high",
+      "weight": 10,
+      "expected": "camera package disabled via policy",
+      "probe": "pm list packages -d (com.android.camera2)",
+      "baseline": "Organizational data-loss-prevention policy",
+      "remediation": "adb shell pm disable-user --user 0 com.android.camera2"
+    },
+    {
+      "id": "security-patch",
+      "title": "Android security patch is current",
+      "severity": "medium",
+      "weight": 5,
+      "expected": "security_patch >= 2024-03-01",
+      "probe": "getprop ro.build.version.security_patch",
+      "baseline": "NIST 800-124 / vendor update guidance",
+      "remediation": "Apply OTA / update image in lab"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# Windows / IDE
+Thumbs.db
+Desktop.ini
+.vs/
+.idea/
+
+# PowerShell
+*.ps1.bak
+*.tmp
+
+# Local scratch
+*.log
