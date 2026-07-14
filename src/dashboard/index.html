@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrgLab MDM — Monitoring &amp; Compliance Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">MDM</span>
+      <div>
+        <h1>OrgLab Mobile Device Management</h1>
+        <p class="sub">Monitoring &amp; Compliance Dashboard</p>
+      </div>
+    </div>
+    <div class="agent-meta">
+      <span id="agentName"></span>
+      <span id="agentVersion"></span>
+      <span id="generatedAt"></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="kpis" id="kpis"></section>
+
+  <section class="policy-strip">
+    <div class="policy-inner">
+      <span class="policy-badge">POLICY</span>
+      <span id="policyName"></span>
+      <span id="policyDesc"></span>
+    </div>
+  </section>
+
+  <section class="fleet">
+    <div class="fleet-header">
+      <h2>Managed Fleet</h2>
+      <span class="fleet-count" id="fleetCount"></span>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="baseline">
+    <h2>Policy Baseline — OrgLab MDM v1.0</h2>
+    <p class="baseline-sub">Controls are mapped to CIS Android OS Benchmark and NIST SP 800-124 Rev. 2.</p>
+    <table class="rule-table">
+      <thead>
+        <tr><th>ID</th><th>Control</th><th>Severity</th><th>Weight</th><th>Expected state</th></tr>
+      </thead>
+      <tbody id="ruleRows"></tbody>
+    </table>
+  </section>
+</main>
+
+<footer>
+  <p>Prepared by Sulemana Akuantu Abdul Jalil (FCM.41.018.245.23) &middot; Blue Team &middot; Cyber Labwork II Semester Project</p>
+</footer>
+
+<script src="data/devices.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
