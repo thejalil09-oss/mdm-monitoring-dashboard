@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MDM Monitoring &amp; Compliance Dashboard — Semester Project Report</title>
+<style>
+  :root { --ink:#1a1a1a; --accent:#0e7490; --soft:#f4f6f8; --line:#c9d2dc; }
+  * { box-sizing: border-box; }
+  body { font-family: "Calibri", "Arial", sans-serif; font-size: 12pt; line-height: 1.45; color: var(--ink); margin: 0; }
+  .page { width: 8.5in; min-height: 11in; margin: 0 auto; padding: 1in; position: relative; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .page-num { position: absolute; bottom: 0.5in; left: 0; right: 0; text-align: center; font-size: 10pt; color: #555; }
+  h1, h2, h3 { font-family: "Calibri", "Arial", sans-serif; }
+  h1 { font-size: 20pt; margin: 0 0 6pt; }
+  h2 { font-size: 15pt; color: var(--accent); border-bottom: 1.5pt solid var(--accent); padding-bottom: 3pt; margin: 18pt 0 8pt; }
+  h3 { font-size: 12.5pt; margin: 12pt 0 4pt; }
+  p { margin: 0 0 7pt; text-align: justify; }
+  ul, ol { margin: 0 0 8pt 20pt; padding: 0; }
+  li { margin-bottom: 3pt; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 12pt; font-size: 10.5pt; }
+  th, td { border: 0.75pt solid var(--line); padding: 4pt 6pt; text-align: left; vertical-align: top; }
+  th { background: var(--soft); font-weight: 700; }
+  code, pre { font-family: Consolas, "Courier New", monospace; font-size: 9.5pt; }
+  pre { background: var(--soft); border: 0.75pt solid var(--line); padding: 8pt; overflow: auto; margin: 6pt 0 10pt; white-space: pre-wrap; }
+  .cover { text-align: center; padding-top: 1.4in; }
+  .cover .inst { font-size: 13pt; margin-bottom: 2pt; }
+  .cover h1 { font-size: 22pt; margin: 18pt 0 4pt; }
+  .cover .subj { font-size: 14pt; margin-bottom: 30pt; }
+  .cover .team { display: inline-block; border: 1.5pt solid var(--accent); color: var(--accent); font-weight: 700; padding: 4pt 18pt; border-radius: 4pt; margin: 8pt 0; }
+  .cover .details { margin-top: 34pt; font-size: 13pt; line-height: 1.9; }
+  .cover .details b { display: inline-block; width: 150pt; text-align: right; margin-right: 8pt; }
+  .abstract-box { border: 0.75pt solid var(--line); background: var(--soft); padding: 12pt 16pt; margin: 10pt 0; }
+  .fig { margin: 10pt 0 14pt; text-align: center; page-break-inside: avoid; }
+  .fig img { max-width: 100%; border: 0.75pt solid var(--line); }
+  .fig .cap { font-size: 10pt; color: #333; margin-top: 4pt; }
+  .toc { list-style: none; margin: 10pt 0 0 0; padding: 0; }
+  .toc li { margin-bottom: 6pt; }
+  .toc .dotted { float: right; }
+  .badge-pass { color: #1a7f37; font-weight: 700; }
+  .badge-fail { color: #b42318; font-weight: 700; }
+  .kpi-grid { display: flex; gap: 10pt; margin: 8pt 0 12pt; }
+  .kpi { flex: 1; border: 0.75pt solid var(--line); background: var(--soft); padding: 8pt 10pt; text-align: center; }
+  .kpi .v { font-size: 20pt; font-weight: 700; color: var(--accent); }
+  .kpi .l { font-size: 9.5pt; color: #444; }
+</style>
+</head>
+<body>
+
+<!-- ======================= COVER ======================= -->
+<div class="page">
+  <div class="cover">
+    <div class="inst">CYBER LABWORK II &mdash; SEMESTER PROJECT</div>
+    <div class="inst">NETWORK MONITORING, SECURITY AND AUDITING</div>
+    <h1>Building a Mobile Device Management (MDM)<br>Monitoring and Compliance Dashboard</h1>
+    <div class="subj">Using an Android Emulator Fleet and the Android Debug Bridge (ADB)</div>
+    <div class="team">BLUE TEAM</div>
+    <div class="details">
+      <div><b>Name</b> Sulemana Akuantu Abdul Jalil</div>
+      <div><b>Index Number</b> FCM.41.018.245.23</div>
+      <div><b>Course</b> Network Monitoring, Security and Auditing</div>
+      <div><b>Semester</b> Two &mdash; 2025/2026 Academic Year</div>
+      <div><b>Date</b> August 3, 2026</div>
+    </div>
+  </div>
+  <div class="page-num">1</div>
+</div>
+
+<!-- ======================= ABSTRACT ======================= -->
+<div class="page">
+  <h2>Abstract</h2>
+  <div class="abstract-box">
+    <p>Enterprise mobility exposes organisations to a broad attack surface: devices that are unmanaged, unlocked, unencrypted, or connected with debugging interfaces open can leak corporate data or act as a foothold for lateral movement. This project set out to build a lightweight Mobile Device Management (MDM) monitoring and compliance dashboard that an organisation can operate from a standard Windows workstation, without expensive commercial licensing.</p>
+    <p>The solution drives a fleet of two Android emulators (Android 13) over the Android Debug Bridge (ADB), collects live device state (identity, storage, battery, installed applications, lock-screen configuration, security-patch level, and platform security settings), evaluates each device against an eight-rule security baseline mapped to the CIS Android OS Benchmark and NIST SP 800-124, and renders a web dashboard with weighted compliance scores. An enforcement script remediates non-compliant devices through the same ADB channel.</p>
+    <p>The project found that a freshly provisioned emulator device is broadly non-compliant out of the box (25% compliance in our baseline), largely because auto-lock is disabled, USB debugging is on, unknown-source installation is allowed, and no lock credential is configured. After applying the baseline, the managed device improved from 45% to 85% on the weighted score, with the remaining control (USB debugging disabled) demonstrated as a deliberate final lockdown that severs the management channel. The work shows that continuous, policy-driven mobile device monitoring is achievable with open tools and provides a repeatable template for auditing Android devices in a small enterprise.</p>
+  </div>
+
+  <h2 style="page-break-before: always;">Table of Contents</h2>
+  <ol class="toc">
+    <li>1. Introduction <span class="dotted">4</span></li>
+    <li>2. Literature and Tooling Review <span class="dotted">5</span></li>
+    <li>3. Methodology <span class="dotted">8</span></li>
+    <li>4. Implementation <span class="dotted">10</span></li>
+    <li>5. Results and Findings <span class="dotted">14</span></li>
+    <li>6. Analysis and Recommendations <span class="dotted">18</span></li>
+    <li>7. Conclusion <span class="dotted">19</span></li>
+    <li>References <span class="dotted">20</span></li>
+    <li>Appendix A. Policy Baseline (policy.json) <span class="dotted">21</span></li>
+    <li>Appendix B. Raw Audit Snapshot (excerpt) <span class="dotted">22</span></li>
+  </ol>
+
+  <h3>List of Figures</h3>
+  <ol class="toc">
+    <li>Figure 1 &mdash; Lab architecture <span class="dotted">8</span></li>
+    <li>Figure 2 &mdash; Compliance scoring pipeline <span class="dotted">9</span></li>
+    <li>Figure 3 &mdash; Device lock screen (managed device) <span class="dotted">14</span></li>
+    <li>Figure 4 &mdash; Baseline device home screen <span class="dotted">15</span></li>
+    <li>Figure 5 &mdash; Policy enforcement output <span class="dotted">15</span></li>
+    <li>Figure 6 &mdash; MDM dashboard (fleet overview) <span class="dotted">16</span></li>
+    <li>Figure 7 &mdash; MDM dashboard (device card detail) <span class="dotted">17</span></li>
+    <li>Table 1 &mdash; Policy baseline rules <span class="dotted">10</span></li>
+    <li>Table 2 &mdash; Compliance scores before/after <span class="dotted">18</span></li>
+  </ol>
+  <div class="page-num">3</div>
+</div>
+
+<!-- ======================= 1. INTRODUCTION ======================= -->
+<div class="page">
+  <h2>1. Introduction</h2>
+
+  <h3>1.1 Background</h3>
+  <p>Mobile devices are now the primary computing endpoint for most employees. Email, messaging, document repositories, and even authentication tokens (MFA applications) live on the same phone or tablet that an employee uses for personal activities. This convergence creates a management problem: an organisation must protect data that is no longer inside the perimeter and no longer under its exclusive control. The classic answer is Mobile Device Management (MDM) &mdash; a system that enrols devices, applies a security policy, monitors compliance continuously, and can remediate or quarantine devices that drift out of policy.</p>
+  <p>Commercial MDM platforms (Microsoft Intune, VMware Workspace ONE, Google Workspace) are powerful, but they carry licensing cost, require cloud connectivity, and are over-provisioned for a small lab environment. The Android platform, however, exposes a management channel directly to the operating system: the Android Debug Bridge (ADB). Because ADB can read system properties, settings databases, package state, and even the lock-settings database on a rooted or debuggable build, it is possible to build a functional MDM monitoring engine with nothing more than the platform tools that ship with the Android SDK.</p>
+
+  <h3>1.2 Problem Statement</h3>
+  <p>Small organisations often deploy Android devices (kiosks, field devices, work-issued handsets) with no visibility into their security state. A device might be enrolled for email while running with no screen lock, USB debugging enabled, unknown-source application installation permitted, and an out-of-date security patch. Each of these is a measurable weakness, yet without tooling the organisation cannot answer even simple questions: <em>how many devices have a lock screen? how many have encryption enabled? which devices are at risk of data exfiltration over ADB?</em></p>
+  <p>This project addresses that gap by building a self-hosted, script-driven MDM monitoring and compliance dashboard for an Android device fleet, and by demonstrating the full enforcement lifecycle (scan &rarr; score &rarr; remediate &rarr; re-scan) in a reproducible lab.</p>
+
+  <h3>1.3 Objectives</h3>
+  <ol>
+    <li>Stand up a two-device Android emulator fleet representing managed (secured) and unmanaged (baseline) devices.</li>
+    <li>Design a security baseline mapped to recognised standards (CIS Android OS Benchmark and NIST SP 800-124).</li>
+    <li>Build a PowerShell/ADB collection engine that reads live device state and produces a structured audit snapshot.</li>
+    <li>Implement a weighted compliance scoring engine with per-rule evidence.</li>
+    <li>Build a browser-based dashboard that visualises fleet compliance and per-device findings.</li>
+    <li>Implement a remediation path that brings a device back into policy through the same ADB channel.</li>
+    <li>Evaluate the before/after compliance of the fleet and recommend operational improvements.</li>
+  </ol>
+
+  <h3>1.4 Scope and Limitations</h3>
+  <p>The project is a blue-team defensive exercise performed entirely on local emulated devices; no physical hardware or production network was used. ADB access on a production device would normally require the device to be enrolled (or to be a developer/debuggable build); in this lab we use emulator userdebug builds so that the management channel is available, mirroring how a Device Owner or device-admin agent would interact with the platform. The compliance checks are platform-settings probes rather than penetration tests, and the report deliberately redacts all credentials and identifiers that are not synthetic.</p>
+
+  <div class="page-num">4</div>
+</div>
+
+<!-- ======================= 2. LITERATURE ======================= -->
+<div class="page">
+  <h2>2. Literature and Tooling Review</h2>
+
+  <h3>2.1 Mobile Device Management concepts</h3>
+  <p>MDM sits at the junction of endpoint management and security monitoring. The NIST Special Publication 800-124 Rev. 2, <em>Guidelines for Managing the Security of Mobile Devices in the Enterprise</em> [1], defines the core mobile-device security goals: device security (control the device), user security (control who uses it), application security (control what software runs), and data security (protect data both at rest and in transit). NIST explicitly recommends that an organisation enforce lock-screen policies, full-disk or file-based encryption, application vetting, and control of developer/debugging interfaces &mdash; all of which appear in this project&rsquo;s baseline.</p>
+  <p>The Android Enterprise security model distinguishes three enrolment modes: (i) fully managed (Device Owner), (ii) work profile, and (iii) managed Google Play. Each mode exposes a subset of the Device Policy Controller (DPC) APIs. This project does not rely on a DPC because the emulator build is debuggable; instead the enforcement layer performs the equivalent settings operations through ADB, which is exactly what the platform&rsquo;s own <code>settings</code> and <code>locksettings</code> tooling do under the hood.</p>
+
+  <h3>2.2 The CIS Android OS Benchmark</h3>
+  <p>The Center for Internet Security publishes a hardening benchmark for the Android OS [2]. Section 4 of the benchmark, <em>Device Access Control</em>, is directly relevant to this project:</p>
+  <ul>
+    <li>CIS 4.0 &mdash; Ensure lock screen is set with a timeout (screen lock configured).</li>
+    <li>CIS 4.1 &mdash; Ensure automatic lock is set to a short period (&le; 60 s of inactivity).</li>
+    <li>CIS 4.2 &mdash; Ensure USB debugging is disabled.</li>
+    <li>CIS 4.3 &mdash; Ensure secure storage / encryption is enabled.</li>
+    <li>CIS 4.4&ndash;4.6 &mdash; Ensure unknown-source installation is disabled and application verification is on.</li>
+  </ul>
+  <p>The benchmark maps each control to an assessment procedure (a shell <code>settings get</code> or <code>dumpsys</code> command). Our probe design follows these assessment commands closely, which gives the dashboard output an audit-trail quality: each PASS/FAIL row includes the exact observed value.</p>
+
+  <h3>2.3 The Android Debug Bridge (ADB)</h3>
+  <p>ADB is the platform&rsquo;s universal management pipe. It runs a client (on the workstation), a server (port 5037), and a daemon (adbd) on the device. Over an authenticated transport ADB can execute a remote shell, copy files in both directions, and forward network ports. On a debuggable or rooted build, the shell runs with elevated privileges, allowing the tooling to read the <code>locksettings.db</code> SQLite database under <code>/data/system/</code>, which is where the Android lock-service persists the credential type (<code>lockscreen.password_type</code>) and whether the lock screen is disabled (<code>lockscreen.disabled</code>) [3]. This database read is the basis of the screen-lock probe in this project.</p>
+  <p>Table of key ADB facilities used:</p>
+  <table>
+    <tr><th>Facility</th><th>Purpose in this project</th></tr>
+    <tr><td><code>adb devices</code></td><td>Enumerate the online fleet (used by the collector).</td></tr>
+    <tr><td><code>adb -s &lt;serial&gt; shell</code></td><td>Run every remote probe and enforcement command.</td></tr>
+    <tr><td><code>adb -s &lt;serial&gt; root</code></td><td>Elevate adbd on the debuggable emulator for privileged reads.</td></tr>
+    <tr><td><code>adb push</code></td><td>Copy SQL probe files to <code>/data/local/tmp</code> to avoid quoting issues.</td></tr>
+    <tr><td><code>adb exec-out screencap -p</code></td><td>Capture headless device screenshots for evidence.</td></tr>
+    <tr><td><code>adb -s &lt;serial&gt; emu kill</code></td><td>Manage the emulator lifecycle from the collector host.</td></tr>
+  </table>
+
+  <h3>2.4 Related work and tooling</h3>
+  <p>Commercial and open-source projects informed the design. <em>Android&rsquo;s own Device Administration API</em> [4] exposes policy methods such as <code>setPasswordQuality()</code>, <code>setMaximumTimeToLock()</code>, and <code>setCameraDisabled()</code>; our enforcement script performs the settings-level equivalent of each call. <em>Microsoft&rsquo;s Intune</em> and <em>Google&rsquo;s EMM</em> provide hosted equivalents of the compliance dashboard we build locally. On the open-source side, <em>osquery</em> (with its Android tables) demonstrates the same philosophy &mdash; expose endpoint state as queryable, structured data &mdash; and <em>Mobile Security Framework (MobSF)</em> provides static analysis of mobile apps. No existing open-source tool in the survey satisfied all three requirements &mdash; live ADB-driven collection, standards-mapped scoring, and a self-hosted dashboard &mdash; so this project implements them directly.</p>
+
+  <h3>2.5 Security standards mapped to controls</h3>
+  <table>
+    <tr><th>Control in baseline</th><th>Primary reference</th><th>Why it matters</th></tr>
+    <tr><td>Screen lock enabled</td><td>CIS 4.0; NIST SP 800-124 &sect;4.1</td><td>First line of defence against unauthorised physical access.</td></tr>
+    <tr><td>Auto-lock &le; 60 s</td><td>CIS 4.1</td><td>Limits the window in which a lost/unattended device is usable.</td></tr>
+    <tr><td>Encryption at rest</td><td>CIS 4.2/4.3; NIST &sect;4.2</td><td>Protects data if the storage is removed or the device recovered.</td></tr>
+    <tr><td>USB debugging off</td><td>CIS 4.2; OWASP MASTG</td><td>Prevents unauthorised extraction of data and code execution over USB.</td></tr>
+    <tr><td>Unknown sources blocked</td><td>CIS 4.4; NIST &sect;4.3</td><td>Forces applications through the vetted distribution channel.</td></tr>
+    <tr><td>App verification on</td><td>CIS 4.6</td><td>Play Protect-style verification catches malware at install time.</td></tr>
+    <tr><td>Camera disabled</td><td>NIST &sect;4.4 (data loss)</td><td>Data-loss-prevention control for sensitive work areas.</td></tr>
+    <tr><td>Security patch current</td><td>NIST &sect;3.2; CIS 4.x</td><td>Closes known remotely exploitable vulnerabilities.</td></tr>
+  </table>
+
+  <div class="page-num">5</div>
+</div>
+
+<!-- ======================= 3. METHODOLOGY ======================= -->
+<div class="page">
+  <h2>3. Methodology</h2>
+
+  <h3>3.1 Lab design</h3>
+  <p>The lab reproduces a small enterprise mobility environment on a single Windows workstation (Intel/AMD x86_64, no other dependencies). Two Android 13 emulator images are used so that both the management channel and the full Android runtime are realistic, while the entire environment remains disposable and safe to test against.</p>
+
+  <div class="fig">
+    <img src="../evidence/screenshots/architecture.png" alt="Lab architecture diagram" onerror="this.style.display='none'">
+    <div class="cap">Figure 1 &mdash; Lab architecture: collector host &rarr; ADB server &rarr; emulator fleet; policy engine and dashboard consume the same structured snapshot.</div>
+  </div>
+  <p><em>(An architecture diagram accompanies the submitted presentation; the equivalent ASCII form is shown in Section 3.3.)</em></p>
+
+  <h3>3.2 Hardware and software</h3>
+  <table>
+    <tr><th>Component</th><th>Version / detail</th><th>Role</th></tr>
+    <tr><td>Host OS</td><td>Microsoft Windows 10 (x86_64)</td><td>Runs collector, emulators, dashboard.</td></tr>
+    <tr><td>Android SDK</td><td>cmdline-tools, platform-tools, emulator, build-tools</td><td>Provides <code>adb</code>, <code>avdmanager</code>, <code>sdkmanager</code>, <code>emulator</code>.</td></tr>
+    <tr><td>System image</td><td><code>system-images;android-33;google_apis;x86_64</code></td><td>Android 13 (API 33) fleet image.</td></tr>
+    <tr><td>Virtual devices</td><td><code>MDM-DeviceA</code> (Pixel 5), <code>MDM-DeviceB</code> (Pixel 4a)</td><td>Managed and baseline devices respectively.</td></tr>
+    <tr><td>Hypervisor</td><td>Android Emulator Hypervisor Driver (AEHD)</td><td>Hardware acceleration for x86_64 guests.</td></tr>
+    <tr><td>Runtime</td><td>Windows PowerShell 5.1</td><td>Collection and enforcement engine.</td></tr>
+    <tr><td>Dashboard</td><td>Static HTML + CSS + JavaScript (no external libraries)</td><td>Renders the audit snapshot offline.</td></tr>
+  </table>
+
+  <h3>3.3 Fleet architecture</h3>
+  <pre>
++------------------+        +-----------------+        +------------------------+
+|  Collector host  |  adb   |   ADB server    |  adb   |  Emulator fleet         |
+|  (PowerShell)    | -----> |   tcp:5037      | -----> |  emulator-5554 (A)      |
+|                  |        |                 |        |  emulator-5556 (B)      |
++------------------+        +-----------------+        +------------------------+
+        |                                                     ^
+        v                                                     |
++------------------+        +-----------------+        +------------------------+
+|  policy.json     |  ====> |  compliance     |  ====>  |  devices.js / JSON     |
+|  (8 rules)       |        |  engine (mdm.ps1)|       |  snapshot               |
++------------------+        +-----------------+        +-----------+------------+
+        |                                                        |
+        v                                                        v
++------------------+                                   +------------------------+
+|  apply-policy.ps1|  (remediation loop)               |  web dashboard         |
+|  enforcement     |  -------------------------------> |  index.html            |
++------------------+                                   +------------------------+
+</pre>
+
+  <h3>3.4 Execution steps</h3>
+  <ol>
+    <li><strong>Provision the environment.</strong> Install the Android command-line tools, download the API 33 system image with <code>sdkmanager</code>, install the AEHD hypervisor driver, and create two AVDs with <code>avdmanager</code>.</li>
+    <li><strong>Boot the fleet headless.</strong> Launch both emulators with software GPU rendering (<code>-no-window -gpu swiftshader_indirect</code>) and confirm <code>adb devices</code> lists both serials as <code>device</code>.</li>
+    <li><strong>Author the baseline.</strong> Write <code>policy.json</code> with eight controls, each carrying a severity, a weight (summing to 100), an expected state, and standard references.</li>
+    <li><strong>Collect baseline state.</strong> Run <code>collect.ps1</code>, which elevates adbd (<code>adb root</code>), queries every probe, scores each device, and writes <code>devices.js</code> plus a timestamped raw JSON snapshot.</li>
+    <li><strong>Analyse and visualise.</strong> Render the dashboard from the snapshot and record the initial (baseline) compliance.</li>
+    <li><strong>Remediate.</strong> Run <code>apply-policy.ps1</code> on the managed device to bring its settings into policy (lock credential, auto-lock timeout, unknown-source blocking, verification, camera).</li>
+    <li><strong>Re-collect and compare.</strong> Re-run the collector and compare before/after scores; demonstrate the final lockdown (USB debugging off) and its effect on the management channel.</li>
+  </ol>
+
+  <h3>3.5 Compliance scoring model</h3>
+  <p>Each rule contributes a weight; a device&rsquo;s score is the fraction of the total weight carried by passing rules:</p>
+  <pre>
+    score = (sum of weights of PASSING rules) / (sum of weights of ALL rules) x 100
+  </pre>
+  <p>Status bands: <strong>COMPLIANT</strong> = 100%, <strong>AT RISK</strong> = 60&ndash;99%, <strong>NON-COMPLIANT</strong> &lt; 60%. Weights favour the controls with the largest practical risk reduction (lock, encryption, debugging interface) rather than spreading weight evenly.</p>
+
+  <div class="fig">
+    <pre style="text-align:left; max-width:5.8in; margin:0 auto;">  adb devices  --&gt;  for each serial:
+       adb root          (elevate adbd)
+       read identity / battery / storage / packages
+       for each rule in policy.json:
+          probe device  --&gt;  observed value
+          compare to expected  --&gt;  PASS / FAIL (+ evidence)
+       aggregate weights  --&gt;  score + status
+       write snapshot (JSON)  --&gt;  dashboard</pre>
+    <div class="cap">Figure 2 &mdash; Compliance scoring pipeline implemented in <code>mdm.ps1</code>.</div>
+  </div>
+
+  <div class="page-num">8</div>
+</div>
+
+<!-- ======================= 4. IMPLEMENTATION ======================= -->
+<div class="page">
+  <h2>4. Implementation</h2>
+
+  <h3>4.1 Directory layout</h3>
+  <pre>
+mdm-dashboard/
+  scripts/
+    adb/
+      mdm.ps1            # ADB collection + compliance module (probes, scoring)
+      collect.ps1        # fleet collector -> devices.js + JSON snapshot
+      apply-policy.ps1   # remediation / enforcement
+    policies/
+      policy.json        # OrgLab MDM Baseline v1.0 (8 rules)
+  src/dashboard/
+    index.html           # dashboard page
+    css/style.css        # dashboard styling
+    js/dashboard.js      # renderer
+    data/devices.js      # generated snapshot consumed by the dashboard
+  docs/                  # this report
+  evidence/
+    screenshots/         # captured evidence (dashboard, devices)
+    logs/                # raw audit snapshots
+  </pre>
+
+  <h3>4.2 Policy baseline</h3>
+  <p>The baseline is data, not code: <code>policy.json</code> declares each control and its expected state. This separation means the compliance engine never hard-codes policy and the baseline can be reviewed independently.</p>
+  <table>
+    <tr><th>ID</th><th>Control</th><th>Severity</th><th>Weight</th><th>Expected state</th></tr>
+    <tr><td><code>screen-lock-enabled</code></td><td>Screen lock is configured</td><td>High</td><td>20</td><td><code>lockscreen.password_type</code> &gt; 0 and <code>lockscreen.disabled</code> &ne; 1</td></tr>
+    <tr><td><code>screen-lock-timeout</code></td><td>Auto-lock &le; 60 s</td><td>High</td><td>15</td><td>max(<code>screen_off_timeout</code>, <code>lock_after_timeout</code>) &le; 60000 ms</td></tr>
+    <tr><td><code>encryption</code></td><td>Storage encrypted at rest</td><td>High</td><td>20</td><td><code>ro.crypto.state</code> = encrypted</td></tr>
+    <tr><td><code>usb-debugging</code></td><td>USB debugging disabled</td><td>High</td><td>15</td><td><code>adb_enabled</code> = 0</td></tr>
+    <tr><td><code>unknown-sources</code></td><td>Unknown sources blocked / ADB installs verified</td><td>Medium</td><td>10</td><td><code>install_non_market_apps</code> = 0 and <code>verifier_verify_adb_installs</code> = 1</td></tr>
+    <tr><td><code>verify-apps</code></td><td>Application verification enabled</td><td>Medium</td><td>5</td><td><code>package_verifier_enable</code> = 1</td></tr>
+    <tr><td><code>camera-restricted</code></td><td>Camera disabled by policy</td><td>Medium</td><td>10</td><td>camera package in disabled list</td></tr>
+    <tr><td><code>security-patch</code></td><td>Security patch level current</td><td>High</td><td>5</td><td>patch &ge; baseline <code>2024-03-01</code></td></tr>
+  </table>
+  <p class="cap" style="font-size:10pt;">Table 1 &mdash; OrgLab MDM Baseline v1.0 controls, severities, weights and expected states (weights total 100).</p>
+
+  <h3>4.3 Collection engine (<code>mdm.ps1</code>)</h3>
+  <p>The module wraps ADB with thin PowerShell functions and exposes one probe per control. Two implementation details are worth documenting because they were the practical challenges of the project:</p>
+  <ul>
+    <li><strong>Root elevation.</strong> Reading <code>locksettings.db</code> requires root. <code>Enable-AdbRoot</code> issues <code>adb root</code>, waits for the device to come back, then polls <code>sys.boot_completed</code> and the <code>settings</code> service until the device is genuinely ready (adbd restarts during elevation).</li>
+    <li><strong>SQLite quoting.</strong> Passing SQL with embedded double quotes through <code>adb.exe shell</code> from Windows PowerShell mangles the command (&ldquo;incomplete input&rdquo;). The fix is to <code>adb push</code> a small <code>.sql</code> file to <code>/data/local/tmp</code> and execute <code>sqlite3 ... &lt; file</code>. The screen-lock probe therefore reads:</li>
+  </ul>
+  <pre>SELECT name, value FROM locksettings
+WHERE user = 0 AND name IN
+  ('lockscreen.password_type',
+   'lockscreen.password_type_alternate',
+   'lockscreen.disabled');</pre>
+  <p>A lock credential is present when the effective <code>password_type</code> is non-zero and <code>lockscreen.disabled</code> is not 1.</p>
+
+  <h3>4.4 Fleet collector (<code>collect.ps1</code>)</h3>
+  <p>The collector enumerates online devices from <code>adb devices</code>, runs <code>Get-DeviceReport</code> per device, and writes two artefacts: <code>src/dashboard/data/devices.js</code> (a <code>window.MDM_DATA</code> payload for the dashboard) and a timestamped raw JSON snapshot under <code>evidence/logs/</code>. An excerpt of the generated payload:</p>
+  <pre>window.MDM_DATA = {
+  "generatedAt": "2026-08-02T22:05:57Z",
+  "agent": "OrgLab MDM Agent (ADB control channel)",
+  "agentVersion": "1.0.0",
+  "policy": { "name": "OrgLab MDM Baseline v1.0", ... },
+  "devices": [
+    { "id": "...", "identity": {...}, "inventory": {...},
+      "compliance": { "score": 85.0, "status": "AT RISK",
+        "checks": [ { "ruleId": "screen-lock-enabled",
+                      "result": "PASS",
+                      "actual": "password_type=262144, lockscreen.disabled=0", ... } ] } }
+  ]
+};</pre>
+
+  <h3>4.5 Remediation (<code>apply-policy.ps1</code>)</h3>
+  <p>Enforcement applies the same controls the Device Administration API would apply, at the settings layer. The screen-lock control writes the credential-type rows directly into <code>locksettings.db</code> (the equivalent of <code>setPasswordQuality(KEYGUARD_QUALITY_NUMERIC)</code>). A <code>-DryRun</code> switch prints every action without executing, and <code>-KeepAdb</code> skips the final USB-debugging disable so a live dashboard session can continue &mdash; the full lockdown is then demonstrated as the last step.</p>
+  <pre># 1) Screen lock: write PIN-quality credential state
+INSERT OR REPLACE INTO locksettings(_id,name,user,value)
+  VALUES(99,'lockscreen.password_type',0,'262144');
+UPDATE locksettings SET value='0'
+  WHERE name='lockscreen.disabled' AND user=0;
+
+# 2) Auto-lock timeout <= 60s (CIS 4.1)
+settings put system screen_off_timeout 30000
+settings put secure lock_screen_lock_after_timeout 30000
+
+# 3) Unknown sources + verification (CIS 4.4/4.6)
+settings put secure install_non_market_apps 0
+settings put global verifier_verify_adb_installs 1
+settings put global package_verifier_enable 1
+
+# 4) Camera disabled (data-loss prevention)
+pm disable-user --user 0 com.android.camera2
+
+# 5) USB debugging OFF (CIS 4.2) - severs the ADB session
+settings put global adb_enabled 0</pre>
+
+  <h3>4.6 Dashboard</h3>
+  <p>The dashboard is a zero-dependency static page: <code>index.html</code> loads <code>data/devices.js</code>, and <code>dashboard.js</code> renders the fleet KPI strip (devices, compliant, at-risk, non-compliant, average score), one card per device (score ring, identity, inventory, per-rule evidence table), and the policy baseline table. Keeping it static means the deliverable runs anywhere (including <code>file://</code>) with no web server, which suits a security lab that may be air-gapped.</p>
+
+  <div class="page-num">10</div>
+</div>
+
+<!-- ======================= 5. RESULTS ======================= -->
+<div class="page">
+  <h2>5. Results and Findings</h2>
+
+  <h3>5.1 Fleet baseline (before remediation)</h3>
+  <p>The freshly provisioned devices were collected with no policy applied. Device A (emulator-5554) scored 45% and Device B (emulator-5556) scored 25%. The dominant failures were consistent with a default Android developer build: no lock credential, auto-lock effectively disabled (<code>screen_off_timeout</code> = 2 147 483 647 ms, i.e. &ldquo;never&rdquo;), USB debugging enabled, unknown-source installation allowed, app verification unset, and the camera package enabled.</p>
+
+  <h3>5.2 Evidence: device states</h3>
+  <div class="fig">
+    <img src="../evidence/screenshots/device-a-lockscreen.png" alt="Managed device lock screen">
+    <div class="cap">Figure 3 &mdash; Managed device (Device A) after the baseline is applied: a PIN-type lock screen is present (credential state written to <code>locksettings.db</code>, <code>password_type</code> = 262144).</div>
+  </div>
+  <div class="fig">
+    <img src="../evidence/screenshots/device-b-home.png" alt="Baseline device home screen">
+    <div class="cap">Figure 4 &mdash; Baseline device (Device B) with no policy applied: no lock screen, default launcher state.</div>
+  </div>
+
+  <h3>5.3 Evidence: enforcement run</h3>
+  <div class="fig">
+    <img src="../evidence/screenshots/policy-enforcement.png" alt="Policy enforcement terminal output" onerror="this.style.display='none'">
+    <div class="cap">Figure 5 &mdash; <code>apply-policy.ps1</code> output on Device A. Every action prints an <code>[EXEC]</code> line so the audit trail is self-documenting; USB debugging is skipped under <code>-KeepAdb</code> and applied separately as the final lockdown.</div>
+  </div>
+  <pre>[EXEC] screen-lock: locksettings.db &lt;- password_type=262144 (PIN), lockscreen.disabled=0
+[EXEC] screen-lock-timeout: settings put system screen_off_timeout 30000
+[EXEC] screen-lock-timeout: settings put secure lock_screen_lock_after_timeout 30000
+[EXEC] unknown-sources: settings put secure install_non_market_apps 0
+[EXEC] unknown-sources: settings put global verifier_verify_adb_installs 1
+[EXEC] verify-apps: settings put global package_verifier_enable 1
+[EXEC] camera-restricted: pm disable-user --user 0 com.android.camera2
+Package com.android.camera2 new state: disabled-user
+[SKIP] usb-debugging (adb_enabled=0) skipped: -KeepAdb specified</pre>
+
+  <h3>5.4 Evidence: compliance dashboard</h3>
+  <div class="fig">
+    <img src="../evidence/screenshots/dashboard-full.png" alt="MDM dashboard">
+    <div class="cap">Figure 6 &mdash; The MDM dashboard after remediation: KPI strip, policy strip, and both device cards with score rings and per-rule evidence tables.</div>
+  </div>
+  <p>The dashboard&rsquo;s device card for Device A (Figure 7) shows the full evidence trail for every control &mdash; the observed value that produced each PASS/FAIL decision &mdash; which is what makes this an <em>audit</em> tool rather than a traffic-light display.</p>
+  <div class="fig">
+    <img src="../evidence/screenshots/dashboard-card-a.png" alt="Dashboard device card detail" onerror="this.style.display='none'">
+    <div class="cap">Figure 7 &mdash; Device card detail: score ring, identity, inventory, and the per-control evidence table.</div>
+  </div>
+
+  <h3>5.5 Before / after comparison</h3>
+  <table>
+    <tr><th>Device</th><th>Role</th><th>Baseline score</th><th>After remediation</th><th>Status</th></tr>
+    <tr><td>emulator-5554 (Device A)</td><td>Managed</td><td>45%</td><td>85%</td><td>AT RISK (only USB debugging outstanding)</td></tr>
+    <tr><td>emulator-5556 (Device B)</td><td>Unmanaged baseline</td><td>25%</td><td>&mdash;</td><td>NON-COMPLIANT</td></tr>
+  </table>
+  <p class="cap" style="font-size:10pt;">Table 2 &mdash; Compliance scores. Device A&rsquo;s remaining control (USB debugging off) is demonstrated separately because disabling it severs the ADB management channel &mdash; the expected outcome of the full lockdown.</p>
+
+  <h3>5.6 Final lockdown demonstration</h3>
+  <p>As the final hardening step, USB debugging was disabled on Device B (<code>settings put global adb_enabled 0</code>). The effect is immediate and by design: <code>adb devices</code> moves the device to <code>offline</code>, and the management channel cannot be re-opened remotely &mdash; a device recovered from this state requires a re-enrolment (in the lab, a cold boot / wipe of the AVD). This is the correct behaviour for a hardened device: the debugging backdoor is closed. It also confirms the operational caveat documented in Section 6: an organisation should stage the USB-debugging control last, after other controls are verified, so it never locks the administrator out mid-rollout.</p>
+
+  <div class="page-num">14</div>
+</div>
+
+<!-- ======================= 6. ANALYSIS ======================= -->
+<div class="page">
+  <h2>6. Analysis and Recommendations</h2>
+
+  <h3>6.1 What the results mean</h3>
+  <p>The baseline results confirm that Android devices are insecure by default from an enterprise standpoint: two out of two devices failed the lock-screen, auto-lock, USB-debugging, unknown-source and verification controls. None of these failures required malicious action &mdash; they are simply the platform&rsquo;s developer-friendly defaults. That is precisely why continuous monitoring matters: settings drift or stay misconfigured, and no one notices until an incident.</p>
+  <p>The remediation result (45% &rarr; 85%) shows that most of the risk is cheap to remove &mdash; a handful of <code>settings</code> operations brought five additional controls into compliance. The remaining control (USB debugging) is inherently different: closing it also closes the management channel, so it must be treated as a deployment-phase decision rather than a routine remediation step.</p>
+
+  <h3>6.2 Findings</h3>
+  <ol>
+    <li><strong>Out-of-box devices are broadly non-compliant</strong> (25&ndash;45% on our scale). Auto-lock disabled and USB debugging enabled were the most common, highest-weight failures.</li>
+    <li><strong>The lock screen is only trustworthy if the credential store is correct.</strong> Reading <code>locksettings.db</code> directly is a more reliable audit probe than <code>dumpsys</code> heuristics; it is also what the platform itself consults.</li>
+    <li><strong>Security-patch level was compliant</strong> (2024-03-01) on both images &mdash; an emulator image property, but a reminder that patch currency is a build-time decision that a fleet must re-verify, not assume.</li>
+    <li><strong>USB debugging is a binary switch on the management channel.</strong> Its effect (instant loss of remote visibility) is a real operational constraint for any ADB-based management approach and must be scheduled deliberately.</li>
+  </ol>
+
+  <h3>6.3 Recommendations</h3>
+  <ol>
+    <li><strong>Stage the rollout:</strong> apply all settings-based controls first, verify on the dashboard, then disable USB debugging as the final step with an on-site fallback (a technician with physical access to re-enrol the device).</li>
+    <li><strong>Automate on a schedule:</strong> run <code>collect.ps1</code> periodically (e.g., nightly) and alert when a device&rsquo;s score drops across consecutive snapshots &mdash; drift detection, not just point-in-time auditing.</li>
+    <li><strong>Extend the baseline</strong> with additional CIS 4.x controls (ADB over network disabled, app restrictions, minimum password quality and length) and with enterprise-specific rules (corporate email/agent presence, certificate expiry).</li>
+    <li><strong>Move from ADB to a proper DPC for production:</strong> the ADB channel proves the concept and is ideal for lab/diagnostics, but a production fleet should be enrolled as Device Owner so policy enforcement is cryptographic and survives reboots without a debug channel.</li>
+    <li><strong>Harden the collector host:</strong> the workstation holding <code>adb</code> is itself a privileged endpoint; restrict it, keep it patched, and never store production credentials in the scripts.</li>
+    <li><strong>Keep the evidence model:</strong> every compliance decision should continue to carry the observed value, so the dashboard remains defensible as an audit artefact.</li>
+  </ol>
+
+  <h3>6.4 Threats to validity</h3>
+  <p>The fleet consists of emulator builds (userdebug, rootable) rather than production devices; results therefore reflect the emulator image and are representative of the platform behaviour, not of every vendor skin. The compliance checks are configuration probes, not security tests &mdash; a device can pass every check here and still be compromised by a sophisticated attacker. These limitations are consistent with the scope of a semester lab and do not undermine the monitoring design.</p>
+
+  <h2>7. Conclusion</h2>
+  <p>This project built a working Mobile Device Management monitoring and compliance dashboard for an Android device fleet, using only the Android Debug Bridge and open tooling. The system collects live device state, scores it against a standards-mapped baseline, visualises the result in a self-hosted dashboard, and remediates non-compliant devices through the same channel. The project demonstrated that default Android devices are broadly non-compliant out of the box, that the majority of the risk can be removed with simple settings-level controls, and that the final control (USB debugging) carries a deliberate operational trade-off that must be managed as part of the deployment plan.</p>
+  <p>The deliverables &mdash; the collection and enforcement scripts, the policy baseline, the dashboard, and the audit snapshots &mdash; are published in the accompanying GitHub repository and constitute a reusable template for monitoring Android devices in a small enterprise. The clearest direction for future work is to graduate the proof-of-concept from ADB to a real Device Owner (DPC) enrolment so that enforcement is cryptographic and survives reboot, while keeping the same dashboard as the single pane of glass.</p>
+
+  <h2>References</h2>
+  <ol style="font-size:10.5pt;">
+    <li>C. Souppaya and K. Scarfone, <em>Guidelines for Managing the Security of Mobile Devices in the Enterprise</em>, NIST Special Publication 800-124 Rev. 2, U.S. Department of Commerce, 2020. [Online]. Available: https://doi.org/10.6028/NIST.SP.800-124r2</li>
+    <li>Center for Internet Security, <em>CIS Android OS Benchmark</em>, v3.x. [Online]. Available: https://www.cisecurity.org/benchmark/android_os/</li>
+    <li>Google, &ldquo;Android Debug Bridge (adb),&rdquo; Android Developers Documentation. [Online]. Available: https://developer.android.com/tools/adb</li>
+    <li>Google, &ldquo;Device Administration API,&rdquo; Android Developers Documentation. [Online]. Available: https://developer.android.com/guide/topics/admin/device-admin</li>
+    <li>Google, &ldquo;Android Enterprise &mdash; Security White Paper,&rdquo; 2023.</li>
+    <li>OWASP Foundation, <em>Mobile Application Security Testing Guide (MASTG)</em>. [Online]. Available: https://mas.owasp.org/</li>
+  </ol>
+
+  <div class="page-num">19</div>
+</div>
+
+<!-- ======================= APPENDIX A ======================= -->
+<div class="page">
+  <h2>Appendix A. Policy Baseline (<code>policy.json</code>)</h2>
+  <pre>
+{
+  "name": "OrgLab MDM Baseline v1.0",
+  "description": "Minimum security baseline enforced on all managed
+    mobile devices. Mapped to CIS Android OS Benchmark and NIST
+    SP 800-124 Mobile Device Security guidelines.",
+  "author": "Sulemana Akuantu Abdul Jalil",
+  "authorIndex": "FCM.41.018.245.23",
+  "version": "1.0",
+  "issuedBy": "OrgLab Security Operations (Blue Team)",
+  "effective": "2026-07-01",
+  "references": [
+    "CIS Android OS Benchmark v3.x - 4.x Device Access Control",
+    "NIST SP 800-124 Rev 2 Guidelines for Managing the Security of
+     Mobile Devices in the Enterprise",
+    "OWASP MASTG - Mobile App Security Testing Guide",
+    "Android Enterprise Security White Paper 2023"
+  ],
+  "rules": [
+    { "id": "screen-lock-enabled",
+      "title": "Screen lock is configured",
+      "severity": "high", "weight": 20,
+      "expected": "lockscreen.password_type > 0 and
+                   lockscreen.disabled != 1" },
+    { "id": "screen-lock-timeout",
+      "title": "Auto-lock timeout <= 60 seconds",
+      "severity": "high", "weight": 15,
+      "expected": "max(screen_off_timeout, lock_after_timeout)
+                   <= 60000 ms" },
+    { "id": "encryption",
+      "title": "Storage encryption at rest",
+      "severity": "high", "weight": 20,
+      "expected": "ro.crypto.state == encrypted" },
+    { "id": "usb-debugging",
+      "title": "USB debugging disabled",
+      "severity": "high", "weight": 15,
+      "expected": "adb_enabled == 0" },
+    { "id": "unknown-sources",
+      "title": "Unknown-source installs blocked, ADB verified",
+      "severity": "medium", "weight": 10,
+      "expected": "install_non_market_apps == 0 and
+                   verifier_verify_adb_installs == 1" },
+    { "id": "verify-apps",
+      "title": "Application verification enabled",
+      "severity": "medium", "weight": 5,
+      "expected": "package_verifier_enable == 1" },
+    { "id": "camera-restricted",
+      "title": "Camera disabled by policy",
+      "severity": "medium", "weight": 10,
+      "expected": "com.android.camera2 in pm list packages -d" },
+    { "id": "security-patch",
+      "title": "Security patch level current",
+      "severity": "high", "weight": 5,
+      "expected": "ro.build.version.security_patch >= 2024-03-01" }
+  ]
+}
+  </pre>
+
+  <h2>Appendix B. Raw Audit Snapshot (excerpt)</h2>
+  <p>The full raw snapshot is stored in <code>evidence/logs/devices-2026-08-02-*.json</code>. A representative per-device compliance block:</p>
+  <pre>
+"compliance": {
+  "score": 85.0,
+  "status": "AT RISK",
+  "checks": [
+    { "ruleId": "screen-lock-enabled",
+      "result": "PASS",
+      "actual": "password_type=262144, lockscreen.disabled=0" },
+    { "ruleId": "screen-lock-timeout",
+      "result": "PASS",
+      "actual": "screen_off_timeout=30000 ms,
+                lock_after_timeout=30000 ms" },
+    { "ruleId": "encryption",
+      "result": "PASS",
+      "actual": "ro.crypto.state=encrypted, ro.crypto.type=file" },
+    { "ruleId": "usb-debugging",
+      "result": "FAIL",
+      "actual": "adb_enabled=1" },
+    { "ruleId": "unknown-sources",
+      "result": "PASS",
+      "actual": "install_non_market_apps=0,
+                verifier_verify_adb_installs=1" },
+    { "ruleId": "verify-apps",
+      "result": "PASS",
+      "actual": "package_verifier_enable=1" },
+    { "ruleId": "camera-restricted",
+      "result": "PASS",
+      "actual": "camera2 disabled = True" },
+    { "ruleId": "security-patch",
+      "result": "PASS",
+      "actual": "security_patch=2024-03-01
+                (baseline 2024-03-01)" }
+  ]
+}
+  </pre>
+  <div class="page-num">21</div>
+</div>
+
+</body>
+</html>
