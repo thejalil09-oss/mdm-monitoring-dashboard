@@ -1,0 +1,332 @@
+﻿{
+    "generatedAt":  "2026-08-02T18:19:40Z",
+    "agent":  "OrgLab MDM Agent (ADB control channel)",
+    "agentVersion":  "1.0.0",
+    "policy":  {
+                   "name":  "OrgLab MDM Baseline v1.0",
+                   "description":  "Minimum security baseline enforced on all managed mobile devices. Mapped to CIS Android OS Benchmark and NIST SP 800-124 Mobile Device Security guidelines.",
+                   "author":  "Sulemana Akuantu Abdul Jalil",
+                   "authorIndex":  "FCM.41.018.245.23",
+                   "version":  "1.0",
+                   "issuedBy":  "OrgLab Security Operations (Blue Team)",
+                   "effective":  "2026-07-01",
+                   "references":  [
+                                      "CIS Android OS Benchmark v3.x - 4.x Device Access Control",
+                                      "NIST SP 800-124 Rev 2 Guidelines for Managing the Security of Mobile Devices in the Enterprise",
+                                      "OWASP MASTG - Mobile App Security Testing Guide",
+                                      "Android Enterprise Security White Paper 2023"
+                                  ],
+                   "rules":  [
+                                 {
+                                     "id":  "screen-lock-enabled",
+                                     "title":  "Screen lock is configured",
+                                     "severity":  "critical",
+                                     "weight":  20,
+                                     "expected":  "A PIN, password or pattern is set (password_type != 0)",
+                                     "probe":  "locksettings.db lockscreen.password_type",
+                                     "baseline":  "CIS 4.0 Device Access Control",
+                                     "remediation":  "adb shell locksettings set-pin \u003cPIN\u003e"
+                                 },
+                                 {
+                                     "id":  "screen-lock-timeout",
+                                     "title":  "Auto-lock timeout \u003c= 60 seconds",
+                                     "severity":  "high",
+                                     "weight":  15,
+                                     "expected":  "max(screen_off_timeout, lock_after_timeout) \u003c= 60000 ms",
+                                     "probe":  "settings screen_off_timeout / lock_screen_lock_after_timeout",
+                                     "baseline":  "CIS 4.1 Lock Screen Timeout",
+                                     "remediation":  "adb shell settings put system screen_off_timeout 30000"
+                                 },
+                                 {
+                                     "id":  "encryption",
+                                     "title":  "Device storage is encrypted",
+                                     "severity":  "critical",
+                                     "weight":  20,
+                                     "expected":  "ro.crypto.state == encrypted (full-disk/file-based)",
+                                     "probe":  "getprop ro.crypto.state",
+                                     "baseline":  "NIST SP 800-124 / CIS 2.0 Encryption",
+                                     "remediation":  "Enforce via device admin \u0027require encryption\u0027 policy"
+                                 },
+                                 {
+                                     "id":  "usb-debugging",
+                                     "title":  "USB debugging is disabled",
+                                     "severity":  "high",
+                                     "weight":  15,
+                                     "expected":  "adb_enabled == 0",
+                                     "probe":  "settings get global adb_enabled",
+                                     "baseline":  "CIS 4.3 USB Debugging / NIST 800-124",
+                                     "remediation":  "adb shell settings put global adb_enabled 0"
+                                 },
+                                 {
+                                     "id":  "unknown-sources",
+                                     "title":  "Installation from unknown sources is blocked",
+                                     "severity":  "high",
+                                     "weight":  10,
+                                     "expected":  "install_non_market_apps == 0 and ADB installs verified",
+                                     "probe":  "settings get secure install_non_market_apps",
+                                     "baseline":  "CIS 4.5 Unknown Sources",
+                                     "remediation":  "adb shell settings put secure install_non_market_apps 0"
+                                 },
+                                 {
+                                     "id":  "verify-apps",
+                                     "title":  "App verification (Play Protect) is enabled",
+                                     "severity":  "medium",
+                                     "weight":  5,
+                                     "expected":  "package_verifier_enable == 1",
+                                     "probe":  "settings get global package_verifier_enable",
+                                     "baseline":  "CIS 4.6 Verify Apps",
+                                     "remediation":  "adb shell settings put global package_verifier_enable 1"
+                                 },
+                                 {
+                                     "id":  "camera-restricted",
+                                     "title":  "Camera application is restricted",
+                                     "severity":  "high",
+                                     "weight":  10,
+                                     "expected":  "camera package disabled via policy",
+                                     "probe":  "pm list packages -d (com.android.camera2)",
+                                     "baseline":  "Organizational data-loss-prevention policy",
+                                     "remediation":  "adb shell pm disable-user --user 0 com.android.camera2"
+                                 },
+                                 {
+                                     "id":  "security-patch",
+                                     "title":  "Android security patch is current",
+                                     "severity":  "medium",
+                                     "weight":  5,
+                                     "expected":  "security_patch \u003e= 2024-03-01",
+                                     "probe":  "getprop ro.build.version.security_patch",
+                                     "baseline":  "NIST 800-124 / vendor update guidance",
+                                     "remediation":  "Apply OTA / update image in lab"
+                                 }
+                             ]
+               },
+    "devices":  [
+                    {
+                        "id":  "7077be5f-sdk_gphone64_x86_64",
+                        "enrolledAt":  "2026-07-01T09:00:00Z",
+                        "lastCheckIn":  "2026-08-02T18:18:08Z",
+                        "identity":  {
+                                         "adbSerial":  "emulator-5554",
+                                         "androidId":  "7077be5f139e87c9",
+                                         "model":  "sdk_gphone64_x86_64",
+                                         "manufacturer":  "Google",
+                                         "osVersion":  "13",
+                                         "sdkLevel":  "33",
+                                         "securityPatch":  "2024-03-01",
+                                         "buildFingerprint":  "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+                                         "serialNo":  "EMULATOR35X3X11X0",
+                                         "deviceName":  "sdk_gphone64_x86_64"
+                                     },
+                        "inventory":  {
+                                          "batteryLevel":  100,
+                                          "batteryHealth":  2,
+                                          "batteryStatus":  2,
+                                          "storageUsedGb":  0,
+                                          "storageTotalGb":  0,
+                                          "appCount":  0,
+                                          "apps":  {
+
+                                                   }
+                                      },
+                        "compliance":  {
+                                           "score":  45,
+                                           "status":  "NON-COMPLIANT",
+                                           "checks":  [
+                                                          {
+                                                              "ruleId":  "screen-lock-enabled",
+                                                              "title":  "Screen lock is configured",
+                                                              "severity":  "critical",
+                                                              "weight":  20,
+                                                              "expected":  "A PIN, password or pattern is set (password_type != 0)",
+                                                              "actual":  "password_type=262144, lockscreen.disabled=0",
+                                                              "detail":  "Requires lockscreen.password_type != 0",
+                                                              "result":  "PASS"
+                                                          },
+                                                          {
+                                                              "ruleId":  "screen-lock-timeout",
+                                                              "title":  "Auto-lock timeout \u003c= 60 seconds",
+                                                              "severity":  "high",
+                                                              "weight":  15,
+                                                              "expected":  "max(screen_off_timeout, lock_after_timeout) \u003c= 60000 ms",
+                                                              "actual":  "screen_off_timeout=2147483647 ms, lock_after_timeout=-1 ms",
+                                                              "detail":  "Requires max auto-lock \u003c= 60000 ms",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "encryption",
+                                                              "title":  "Device storage is encrypted",
+                                                              "severity":  "critical",
+                                                              "weight":  20,
+                                                              "expected":  "ro.crypto.state == encrypted (full-disk/file-based)",
+                                                              "actual":  "ro.crypto.state=encrypted, ro.crypto.type=file",
+                                                              "detail":  "Requires full-disk or file-based encryption",
+                                                              "result":  "PASS"
+                                                          },
+                                                          {
+                                                              "ruleId":  "usb-debugging",
+                                                              "title":  "USB debugging is disabled",
+                                                              "severity":  "high",
+                                                              "weight":  15,
+                                                              "expected":  "adb_enabled == 0",
+                                                              "actual":  "adb_enabled=1",
+                                                              "detail":  "Requires adb_enabled == 0",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "unknown-sources",
+                                                              "title":  "Installation from unknown sources is blocked",
+                                                              "severity":  "high",
+                                                              "weight":  10,
+                                                              "expected":  "install_non_market_apps == 0 and ADB installs verified",
+                                                              "actual":  "install_non_market_apps=1, verifier_verify_adb_installs=0",
+                                                              "detail":  "Requires unknown-source installs blocked and ADB installs verified",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "verify-apps",
+                                                              "title":  "App verification (Play Protect) is enabled",
+                                                              "severity":  "medium",
+                                                              "weight":  5,
+                                                              "expected":  "package_verifier_enable == 1",
+                                                              "actual":  "package_verifier_enable=null",
+                                                              "detail":  "Requires app verification (Play Protect) enabled",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "camera-restricted",
+                                                              "title":  "Camera application is restricted",
+                                                              "severity":  "high",
+                                                              "weight":  10,
+                                                              "expected":  "camera package disabled via policy",
+                                                              "actual":  "camera2 disabled = False",
+                                                              "detail":  "Requires camera package disabled via policy",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "security-patch",
+                                                              "title":  "Android security patch is current",
+                                                              "severity":  "medium",
+                                                              "weight":  5,
+                                                              "expected":  "security_patch \u003e= 2024-03-01",
+                                                              "actual":  "security_patch=2024-03-01 (baseline 2024-03-01)",
+                                                              "detail":  "Requires security patch \u003e= 2024-03-01",
+                                                              "result":  "PASS"
+                                                          }
+                                                      ]
+                                       }
+                    },
+                    {
+                        "id":  "a7a89022-sdk_gphone64_x86_64",
+                        "enrolledAt":  "2026-07-01T09:00:00Z",
+                        "lastCheckIn":  "2026-08-02T18:19:39Z",
+                        "identity":  {
+                                         "adbSerial":  "emulator-5556",
+                                         "androidId":  "a7a89022005500ec",
+                                         "model":  "sdk_gphone64_x86_64",
+                                         "manufacturer":  "Google",
+                                         "osVersion":  "13",
+                                         "sdkLevel":  "33",
+                                         "securityPatch":  "2024-03-01",
+                                         "buildFingerprint":  "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+                                         "serialNo":  "EMULATOR35X3X11X0",
+                                         "deviceName":  "sdk_gphone64_x86_64"
+                                     },
+                        "inventory":  {
+                                          "batteryLevel":  100,
+                                          "batteryHealth":  2,
+                                          "batteryStatus":  2,
+                                          "storageUsedGb":  0,
+                                          "storageTotalGb":  0,
+                                          "appCount":  0,
+                                          "apps":  {
+
+                                                   }
+                                      },
+                        "compliance":  {
+                                           "score":  25,
+                                           "status":  "NON-COMPLIANT",
+                                           "checks":  [
+                                                          {
+                                                              "ruleId":  "screen-lock-enabled",
+                                                              "title":  "Screen lock is configured",
+                                                              "severity":  "critical",
+                                                              "weight":  20,
+                                                              "expected":  "A PIN, password or pattern is set (password_type != 0)",
+                                                              "actual":  "password_type=0, lockscreen.disabled=1",
+                                                              "detail":  "Requires lockscreen.password_type != 0",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "screen-lock-timeout",
+                                                              "title":  "Auto-lock timeout \u003c= 60 seconds",
+                                                              "severity":  "high",
+                                                              "weight":  15,
+                                                              "expected":  "max(screen_off_timeout, lock_after_timeout) \u003c= 60000 ms",
+                                                              "actual":  "screen_off_timeout=2147483647 ms, lock_after_timeout=-1 ms",
+                                                              "detail":  "Requires max auto-lock \u003c= 60000 ms",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "encryption",
+                                                              "title":  "Device storage is encrypted",
+                                                              "severity":  "critical",
+                                                              "weight":  20,
+                                                              "expected":  "ro.crypto.state == encrypted (full-disk/file-based)",
+                                                              "actual":  "ro.crypto.state=encrypted, ro.crypto.type=file",
+                                                              "detail":  "Requires full-disk or file-based encryption",
+                                                              "result":  "PASS"
+                                                          },
+                                                          {
+                                                              "ruleId":  "usb-debugging",
+                                                              "title":  "USB debugging is disabled",
+                                                              "severity":  "high",
+                                                              "weight":  15,
+                                                              "expected":  "adb_enabled == 0",
+                                                              "actual":  "adb_enabled=1",
+                                                              "detail":  "Requires adb_enabled == 0",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "unknown-sources",
+                                                              "title":  "Installation from unknown sources is blocked",
+                                                              "severity":  "high",
+                                                              "weight":  10,
+                                                              "expected":  "install_non_market_apps == 0 and ADB installs verified",
+                                                              "actual":  "install_non_market_apps=1, verifier_verify_adb_installs=0",
+                                                              "detail":  "Requires unknown-source installs blocked and ADB installs verified",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "verify-apps",
+                                                              "title":  "App verification (Play Protect) is enabled",
+                                                              "severity":  "medium",
+                                                              "weight":  5,
+                                                              "expected":  "package_verifier_enable == 1",
+                                                              "actual":  "package_verifier_enable=null",
+                                                              "detail":  "Requires app verification (Play Protect) enabled",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "camera-restricted",
+                                                              "title":  "Camera application is restricted",
+                                                              "severity":  "high",
+                                                              "weight":  10,
+                                                              "expected":  "camera package disabled via policy",
+                                                              "actual":  "camera2 disabled = False",
+                                                              "detail":  "Requires camera package disabled via policy",
+                                                              "result":  "FAIL"
+                                                          },
+                                                          {
+                                                              "ruleId":  "security-patch",
+                                                              "title":  "Android security patch is current",
+                                                              "severity":  "medium",
+                                                              "weight":  5,
+                                                              "expected":  "security_patch \u003e= 2024-03-01",
+                                                              "actual":  "security_patch=2024-03-01 (baseline 2024-03-01)",
+                                                              "detail":  "Requires security patch \u003e= 2024-03-01",
+                                                              "result":  "PASS"
+                                                          }
+                                                      ]
+                                       }
+                    }
+                ]
+}
