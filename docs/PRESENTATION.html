@@ -40,6 +40,7 @@
   .prog { position:fixed; bottom:2.5vh; right:3vw; font-size:clamp(12px,1.8vh,16px); color:var(--muted); }
   .hint { position:fixed; bottom:2.5vh; left:3vw; font-size:clamp(11px,1.6vh,14px); color:#5b6f8d; }
   .fig img { max-width:min(80vw, 900px); max-height:44vh; border:1px solid var(--line); border-radius:10px; }
+  .fig.wide img { max-width:min(62vw, 1050px); max-height:72vh; }
   .fig .cap { font-size:clamp(11px,1.6vh,14px); color:var(--muted); margin-top:1vh; }
   .center { text-align:center; }
 </style>
@@ -57,31 +58,31 @@
 
 <!-- 2 -->
 <section class="slide">
-  <h2>The problem</h2>
+  <h2>The problem we started with</h2>
   <ul>
-    <li>Phones and tablets now carry corporate mail, files and MFA tokens.</li>
-    <li>Organisations lose visibility once a device leaves the office.</li>
-    <li>Out-of-the-box Android is <strong>not enterprise-ready</strong>: no lock, USB debugging open, unknown-source installs allowed.</li>
-    <li>Commercial MDM (Intune, Workspace ONE) costs money and needs cloud connectivity.</li>
+    <li>Work phones now carry email, files, and the app that generates MFA codes.</li>
+    <li>Once the device leaves the office, the company loses sight of it.</li>
+    <li>Fresh Android is wide open by default: no screen lock, USB debugging on, side-loading allowed.</li>
+    <li>Commercial MDM (Intune, Workspace ONE) works, but it costs money and wants a cloud account.</li>
   </ul>
-  <h3>Goal</h3>
-  <p>A <strong>self-hosted</strong> MDM monitoring and compliance dashboard for an Android fleet — powered by ADB, mapped to CIS &amp; NIST, with a remediation path.</p>
+  <h3>What we built</h3>
+  <p>A self-hosted dashboard that checks each device over ADB, scores it against CIS and NIST, and can push it back into policy.</p>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <h2>Approach in one picture</h2>
+  <h2>How it fits together</h2>
   <div class="grid g2" style="align-items:center">
     <div class="fig">
       <img src="../evidence/screenshots/architecture.png" alt="architecture">
       <div class="cap">Lab architecture: PowerShell collector → ADB server → emulator fleet → dashboard.</div>
     </div>
     <div>
-      <h3>Three layers</h3>
+      <h3>Three jobs</h3>
       <ul>
-        <li><strong>Collect</strong> — live state via ADB (identity, lock, encryption, debug, apps).</li>
-        <li><strong>Score</strong> — 8-rule baseline, weighted 0–100, per-rule evidence.</li>
-        <li><strong>Act</strong> — remediate settings; final lockdown = USB debugging off.</li>
+        <li>Collect. Read live device state over ADB (identity, lock, encryption, debug, apps).</li>
+        <li>Score. Run the 8-rule baseline, weights sum to 100, every check keeps the observed value.</li>
+        <li>Act. Apply the fixes; the last one disables USB debugging.</li>
       </ul>
       <h3>Stack</h3>
       <span class="chip">PowerShell 5.1</span><span class="chip">ADB / platform-tools</span>
@@ -92,11 +93,11 @@
 
 <!-- 4 -->
 <section class="slide">
-  <h2>Why this is an audit tool, not a dashboard</h2>
+  <h2>Every score keeps the value the probe saw</h2>
   <div class="grid g3">
     <div class="card"><div class="big">CIS</div><div class="lbl">Android OS Benchmark §4 — Device Access Control</div></div>
     <div class="card"><div class="big">NIST</div><div class="lbl">SP 800-124 Rev 2 — Mobile Device Security Guidelines</div></div>
-    <div class="card"><div class="big">Evidence</div><div class="lbl">Every PASS/FAIL stores the observed value → defensible audit trail</div></div>
+    <div class="card"><div class="big">Evidence</div><div class="lbl">Every PASS/FAIL stores the observed value, so it can be explained</div></div>
   </div>
   <h3>Policy baseline (weights total 100)</h3>
   <table>
@@ -110,17 +111,17 @@
 
 <!-- 5 -->
 <section class="slide">
-  <h2>Implementation highlights</h2>
+  <h2>The three scripts</h2>
   <div class="grid g2">
     <div>
       <h3>Collect (mdm.ps1)</h3>
       <ul>
-        <li>One probe per control; <code>adb root</code> for privileged reads.</li>
-        <li>Screen-lock probed by reading <code>locksettings.db</code> via pushed SQL file (fixes Windows shell-quoting).</li>
+        <li>One probe per control; <code>adb root</code> for the privileged reads.</li>
+        <li>Lock check reads <code>locksettings.db</code> through a pushed SQL file, which sidesteps Windows shell-quoting.</li>
       </ul>
       <h3>Score + report (collect.ps1)</h3>
       <ul>
-        <li>Writes <code>devices.js</code> + raw JSON snapshot.</li>
+        <li>Writes <code>devices.js</code> plus a raw JSON snapshot.</li>
       </ul>
     </div>
     <div>
@@ -137,11 +138,11 @@ settings put global adb_enabled 0   # final lockdown</pre>
 
 <!-- 6 -->
 <section class="slide">
-  <h2>Results — before vs after</h2>
+  <h2>What the runs showed</h2>
   <div class="grid g3">
     <div class="card"><div class="big up">45% → 85%</div><div class="lbl">Managed device (Device A)</div></div>
     <div class="card"><div class="big down">25%</div><div class="lbl">Unmanaged baseline (Device B)</div></div>
-    <div class="card"><div class="big">8 / 8</div><div class="lbl">controls remediated on A except USB debugging (staged)</div></div>
+    <div class="card"><div class="big">7 / 8</div><div class="lbl">controls fixed on A; USB debugging left for the staged finale</div></div>
   </div>
   <div class="grid g2" style="margin-top:2vh">
     <div class="fig">
@@ -157,21 +158,21 @@ settings put global adb_enabled 0   # final lockdown</pre>
 
 <!-- 7 -->
 <section class="slide">
-  <h2>Live demo — the dashboard</h2>
+  <h2>The dashboard</h2>
   <div class="grid g2" style="align-items:center">
-    <div class="fig">
-      <img src="../evidence/screenshots/dashboard-full.png" alt="dashboard">
-      <div class="cap">KPI strip, per-device cards, per-rule evidence, baseline table.</div>
+    <div class="fig wide">
+      <img src="../evidence/screenshots/dashboard-fleet.png" alt="dashboard">
+      <div class="cap">Fleet overview: KPI strip on top, then one card per device with its evidence table.</div>
     </div>
     <div>
       <h3>What it answers</h3>
       <ul>
-        <li>How many devices are compliant / at risk / non-compliant?</li>
-        <li>Which control is failing, and what value did the probe see?</li>
+        <li>How many devices are compliant, at risk, or non-compliant?</li>
+        <li>Which control fails, and what value did the probe record?</li>
         <li>What is the fleet average score?</li>
       </ul>
       <h3>Key finding</h3>
-      <p>Default devices fail <strong>5+ controls</strong> out of 8 — including the highest-weight ones (lock, debug, timeout).</p>
+      <p>Out of the box, both emulators failed 5 or more of the 8 controls, including the highest-weight ones: lock, debug, and timeout.</p>
     </div>
   </div>
 </section>
@@ -180,30 +181,30 @@ settings put global adb_enabled 0   # final lockdown</pre>
 <section class="slide">
   <h2>The one control that bites back</h2>
   <ul>
-    <li>USB debugging off (<code>adb_enabled=0</code>) <strong>instantly severs the management channel</strong> — device goes <code>offline</code>.</li>
+    <li>USB debugging off (<code>adb_enabled=0</code>) severs the management channel instantly: the device drops to <code>offline</code>.</li>
     <li>Remote re-enable is impossible by design (that is the point).</li>
-    <li>Recovery needs physical access / re-enrolment.</li>
+    <li>Recovery needs physical access and a re-enrolment.</li>
   </ul>
   <h3>Recommendation</h3>
   <ul>
-    <li><strong>Stage the rollout:</strong> apply all settings controls first, verify on the dashboard, then disable USB debugging last.</li>
-    <li>Run the collector on a schedule → detect drift, not a point-in-time audit.</li>
-    <li>Production: graduate from ADB to a Device Owner (DPC) enrolment so policy survives reboots cryptographically.</li>
+    <li>Stage the rollout: apply the settings controls first, verify on the dashboard, then disable USB debugging last.</li>
+    <li>Run the collector on a schedule and alert when a device&rsquo;s score drops.</li>
+    <li>In production, use a Device Owner (DPC) enrolment so policy survives reboots.</li>
   </ul>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <h2>Conclusions</h2>
+  <h2>What came out of the month</h2>
   <ul>
-    <li>An effective MDM monitoring layer is buildable with <strong>open tools + ADB</strong>, no licence cost.</li>
-    <li>Most mobile risk is <strong>default misconfiguration</strong> — measurable and cheap to fix.</li>
-    <li>Evidence-backed scoring turns the dashboard into an <strong>audit artefact</strong>.</li>
+    <li>The monitoring layer runs entirely on free tools: ADB, PowerShell, and a static web page.</li>
+    <li>Most of the risk was default misconfiguration, and a few settings commands removed it.</li>
+    <li>Because every score keeps its evidence, the dashboard doubles as an audit trail.</li>
   </ul>
   <h3>Deliverables</h3>
   <ul>
-    <li>GitHub repository: collection + enforcement scripts, policy baseline, dashboard, evidence, 25-page report.</li>
-    <li>Printed report (15+ pages) following the prescribed structure.</li>
+    <li>GitHub repo: scripts, policy baseline, dashboard, evidence, and the 36-page report PDF.</li>
+    <li>Printed report (36 pages) in the required structure.</li>
   </ul>
   <p style="margin-top:3vh" class="center">Thank you — questions welcome.</p>
 </section>
