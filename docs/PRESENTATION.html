@@ -92,7 +92,7 @@
 
 <!-- 4 -->
 <section class="slide">
-  <h2>Why this is an audit tool, not just a dashboard</h2>
+  <h2>Why this is an audit tool, not a dashboard</h2>
   <div class="grid g3">
     <div class="card"><div class="big">CIS</div><div class="lbl">Android OS Benchmark §4 — Device Access Control</div></div>
     <div class="card"><div class="big">NIST</div><div class="lbl">SP 800-124 Rev 2 — Mobile Device Security Guidelines</div></div>
@@ -187,7 +187,7 @@ settings put global adb_enabled 0   # final lockdown</pre>
   <h3>Recommendation</h3>
   <ul>
     <li><strong>Stage the rollout:</strong> apply all settings controls first, verify on the dashboard, then disable USB debugging last.</li>
-    <li>Run the collector on a schedule → detect drift, not just point-in-time audit.</li>
+    <li>Run the collector on a schedule → detect drift, not a point-in-time audit.</li>
     <li>Production: graduate from ADB to a Device Owner (DPC) enrolment so policy survives reboots cryptographically.</li>
   </ul>
 </section>
