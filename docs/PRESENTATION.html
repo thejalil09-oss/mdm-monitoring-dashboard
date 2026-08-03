@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MDM Monitoring &amp; Compliance Dashboard — Presentation</title>
+<title>MDM Monitoring &amp; Compliance Dashboard (Presentation)</title>
 <style>
   :root { --bg:#0b1220; --panel:#111a2e; --line:#22304d; --text:#e6edf7; --muted:#8fa3c2;
           --accent:#22d3ee; --green:#34d399; --yellow:#fbbf24; --red:#f87171; --blue:#60a5fa; }
@@ -49,7 +49,7 @@
 
 <!-- 1 -->
 <section class="slide active">
-  <div class="kicker">Cyber Labwork II — Semester Project &middot; Blue Team</div>
+  <div class="kicker">Cyber Labwork II &middot; Semester Project &middot; Blue Team</div>
   <h1>Building an MDM Monitoring &amp; Compliance Dashboard for an Android Fleet</h1>
   <p style="color:var(--muted)">Network Monitoring, Security and Auditing</p>
   <p style="margin-top:3vh"><strong>Sulemana Akuantu Abdul Jalil</strong> · FCM.41.018.245.23</p>
@@ -81,7 +81,7 @@
       <h3>Three jobs</h3>
       <ul>
         <li>Collect. Read live device state over ADB (identity, lock, encryption, debug, apps).</li>
-        <li>Score. Run the 8-rule baseline, weights sum to 100, every check keeps the observed value.</li>
+        <li>Score. Run all eight rules; weights sum to 100, and every check keeps the observed value.</li>
         <li>Act. Apply the fixes; the last one disables USB debugging.</li>
       </ul>
       <h3>Stack</h3>
@@ -95,8 +95,8 @@
 <section class="slide">
   <h2>Every score keeps the value the probe saw</h2>
   <div class="grid g3">
-    <div class="card"><div class="big">CIS</div><div class="lbl">Android OS Benchmark §4 — Device Access Control</div></div>
-    <div class="card"><div class="big">NIST</div><div class="lbl">SP 800-124 Rev 2 — Mobile Device Security Guidelines</div></div>
+    <div class="card"><div class="big">CIS</div><div class="lbl">Android OS Benchmark §4 (Device Access Control)</div></div>
+    <div class="card"><div class="big">NIST</div><div class="lbl">SP 800-124 Rev 2 (Mobile Device Security Guidelines)</div></div>
     <div class="card"><div class="big">Evidence</div><div class="lbl">Every PASS/FAIL stores the observed value, so it can be explained</div></div>
   </div>
   <h3>Policy baseline (weights total 100)</h3>
@@ -151,7 +151,7 @@ settings put global adb_enabled 0   # final lockdown</pre>
     </div>
     <div class="fig">
       <img src="../evidence/screenshots/policy-enforcement.png" alt="enforcement">
-      <div class="cap">Enforcement run — every action logged.</div>
+      <div class="cap">Enforcement run: every action logged.</div>
     </div>
   </div>
 </section>
@@ -172,7 +172,7 @@ settings put global adb_enabled 0   # final lockdown</pre>
         <li>What is the fleet average score?</li>
       </ul>
       <h3>Key finding</h3>
-      <p>Out of the box, both emulators failed 5 or more of the 8 controls, including the highest-weight ones: lock, debug, and timeout.</p>
+      <p>Out of the box, both emulators failed 5 or more of the 8 controls, including the ones carrying the most weight: lock, debug, timeout.</p>
     </div>
   </div>
 </section>
@@ -206,7 +206,7 @@ settings put global adb_enabled 0   # final lockdown</pre>
     <li>GitHub repo: scripts, policy baseline, dashboard, evidence, and the 36-page report PDF.</li>
     <li>Printed report (36 pages) in the required structure.</li>
   </ul>
-  <p style="margin-top:3vh" class="center">Thank you — questions welcome.</p>
+  <p style="margin-top:3vh" class="center">Thank you. Questions welcome.</p>
 </section>
 
 <div class="hint">← / → to navigate · PgUp/PgDn · Esc overview</div>
