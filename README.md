@@ -33,7 +33,7 @@ mdm-dashboard/
     policies/policy.json   # OrgLab MDM Baseline v1.0
   src/dashboard/           # static dashboard (index.html, css, js, data/)
   docs/REPORT.html         # project report (print-ready)
-  docs/REPORT.pdf          # 25-page PDF of the report
+  docs/REPORT.pdf          # 36-page PDF of the report
   evidence/screenshots/    # captured evidence
   evidence/logs/           # raw audit snapshots
 ```
