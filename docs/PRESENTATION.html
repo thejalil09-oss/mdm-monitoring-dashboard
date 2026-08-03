@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDM Monitoring &amp; Compliance Dashboard — Presentation</title>
+<style>
+  :root { --bg:#0b1220; --panel:#111a2e; --line:#22304d; --text:#e6edf7; --muted:#8fa3c2;
+          --accent:#22d3ee; --green:#34d399; --yellow:#fbbf24; --red:#f87171; --blue:#60a5fa; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body { background:radial-gradient(1200px 700px at 20% -10%, #16213a 0%, var(--bg) 55%);
+         color:var(--text); font-family:"Segoe UI", system-ui, sans-serif; overflow:hidden; }
+  .slide { display:none; width:100vw; height:100vh; padding:6vh 7vw; flex-direction:column;
+           justify-content:center; }
+  .slide.active { display:flex; }
+  h1 { font-size:clamp(30px,5.5vh,56px); line-height:1.15; margin-bottom:2vh; }
+  h2 { font-size:clamp(24px,4vh,40px); color:var(--accent); margin-bottom:1.6vh; }
+  h3 { font-size:clamp(18px,2.8vh,26px); margin:2vh 0 1vh; color:var(--blue); }
+  p, li { font-size:clamp(15px,2.3vh,22px); line-height:1.55; }
+  ul { margin-left:1.4em; }
+  li { margin-bottom:0.7vh; }
+  .kicker { text-transform:uppercase; letter-spacing:2px; font-size:clamp(11px,1.6vh,14px); color:var(--muted); margin-bottom:1.2vh; }
+  .grid { display:grid; gap:2vh; margin-top:1vh; }
+  .g2 { grid-template-columns:1fr 1fr; }
+  .g3 { grid-template-columns:repeat(3,1fr); }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:2vh 2vw; }
+  .card .big { font-size:clamp(28px,5vh,44px); font-weight:800; color:var(--accent); }
+  .card .lbl { font-size:clamp(12px,1.7vh,16px); color:var(--muted); }
+  .up { color:var(--green); } .down { color:var(--red); }
+  code, pre { font-family:Consolas, monospace; }
+  pre { background:#0d1526; border:1px solid var(--line); border-radius:10px; padding:1.6vh 1.4vw;
+        font-size:clamp(11px,1.7vh,15px); overflow:auto; }
+  table { border-collapse:collapse; width:100%; font-size:clamp(12px,1.8vh,17px); }
+  th, td { border:1px solid var(--line); padding:0.8vh 0.8vw; text-align:left; }
+  th { background:#16213a; }
+  .pass { color:var(--green); font-weight:700; } .fail { color:var(--red); font-weight:700; }
+  .chip { display:inline-block; background:#16213a; border:1px solid var(--line); border-radius:20px;
+          padding:0.4vh 1vw; margin:0.3vh 0.3vh; font-size:clamp(11px,1.6vh,15px); }
+  .prog { position:fixed; bottom:2.5vh; right:3vw; font-size:clamp(12px,1.8vh,16px); color:var(--muted); }
+  .hint { position:fixed; bottom:2.5vh; left:3vw; font-size:clamp(11px,1.6vh,14px); color:#5b6f8d; }
+  .fig img { max-width:min(80vw, 900px); max-height:44vh; border:1px solid var(--line); border-radius:10px; }
+  .fig .cap { font-size:clamp(11px,1.6vh,14px); color:var(--muted); margin-top:1vh; }
+  .center { text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide active">
+  <div class="kicker">Cyber Labwork II — Semester Project &middot; Blue Team</div>
+  <h1>Building an MDM Monitoring &amp; Compliance Dashboard for an Android Fleet</h1>
+  <p style="color:var(--muted)">Network Monitoring, Security and Auditing</p>
+  <p style="margin-top:3vh"><strong>Sulemana Akuantu Abdul Jalil</strong> · FCM.41.018.245.23</p>
+  <p>August 2026</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>The problem</h2>
+  <ul>
+    <li>Phones and tablets now carry corporate mail, files and MFA tokens.</li>
+    <li>Organisations lose visibility once a device leaves the office.</li>
+    <li>Out-of-the-box Android is <strong>not enterprise-ready</strong>: no lock, USB debugging open, unknown-source installs allowed.</li>
+    <li>Commercial MDM (Intune, Workspace ONE) costs money and needs cloud connectivity.</li>
+  </ul>
+  <h3>Goal</h3>
+  <p>A <strong>self-hosted</strong> MDM monitoring and compliance dashboard for an Android fleet — powered by ADB, mapped to CIS &amp; NIST, with a remediation path.</p>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <h2>Approach in one picture</h2>
+  <div class="grid g2" style="align-items:center">
+    <div class="fig">
+      <img src="../evidence/screenshots/architecture.png" alt="architecture">
+      <div class="cap">Lab architecture: PowerShell collector → ADB server → emulator fleet → dashboard.</div>
+    </div>
+    <div>
+      <h3>Three layers</h3>
+      <ul>
+        <li><strong>Collect</strong> — live state via ADB (identity, lock, encryption, debug, apps).</li>
+        <li><strong>Score</strong> — 8-rule baseline, weighted 0–100, per-rule evidence.</li>
+        <li><strong>Act</strong> — remediate settings; final lockdown = USB debugging off.</li>
+      </ul>
+      <h3>Stack</h3>
+      <span class="chip">PowerShell 5.1</span><span class="chip">ADB / platform-tools</span>
+      <span class="chip">Android 13 emulator ×2</span><span class="chip">HTML/CSS/JS dashboard</span>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <h2>Why this is an audit tool, not just a dashboard</h2>
+  <div class="grid g3">
+    <div class="card"><div class="big">CIS</div><div class="lbl">Android OS Benchmark §4 — Device Access Control</div></div>
+    <div class="card"><div class="big">NIST</div><div class="lbl">SP 800-124 Rev 2 — Mobile Device Security Guidelines</div></div>
+    <div class="card"><div class="big">Evidence</div><div class="lbl">Every PASS/FAIL stores the observed value → defensible audit trail</div></div>
+  </div>
+  <h3>Policy baseline (weights total 100)</h3>
+  <table>
+    <tr><th>Control</th><th>Sev</th><th>W</th><th>Control</th><th>Sev</th><th>W</th></tr>
+    <tr><td>Screen lock configured</td><td>High</td><td>20</td><td>Unknown sources blocked</td><td>Med</td><td>10</td></tr>
+    <tr><td>Auto-lock ≤ 60 s</td><td>High</td><td>15</td><td>App verification on</td><td>Med</td><td>5</td></tr>
+    <tr><td>Encryption at rest</td><td>High</td><td>20</td><td>Camera disabled</td><td>Med</td><td>10</td></tr>
+    <tr><td>USB debugging off</td><td>High</td><td>15</td><td>Security patch current</td><td>High</td><td>5</td></tr>
+  </table>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <h2>Implementation highlights</h2>
+  <div class="grid g2">
+    <div>
+      <h3>Collect (mdm.ps1)</h3>
+      <ul>
+        <li>One probe per control; <code>adb root</code> for privileged reads.</li>
+        <li>Screen-lock probed by reading <code>locksettings.db</code> via pushed SQL file (fixes Windows shell-quoting).</li>
+      </ul>
+      <h3>Score + report (collect.ps1)</h3>
+      <ul>
+        <li>Writes <code>devices.js</code> + raw JSON snapshot.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Remediate (apply-policy.ps1)</h3>
+      <pre>settings put system screen_off_timeout 30000
+settings put secure install_non_market_apps 0
+settings put global verifier_verify_adb_installs 1
+settings put global package_verifier_enable 1
+pm disable-user --user 0 com.android.camera2
+settings put global adb_enabled 0   # final lockdown</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <h2>Results — before vs after</h2>
+  <div class="grid g3">
+    <div class="card"><div class="big up">45% → 85%</div><div class="lbl">Managed device (Device A)</div></div>
+    <div class="card"><div class="big down">25%</div><div class="lbl">Unmanaged baseline (Device B)</div></div>
+    <div class="card"><div class="big">8 / 8</div><div class="lbl">controls remediated on A except USB debugging (staged)</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:2vh">
+    <div class="fig">
+      <img src="../evidence/screenshots/device-a-lockscreen.png" alt="lock screen">
+      <div class="cap">Device A after policy: PIN lock present.</div>
+    </div>
+    <div class="fig">
+      <img src="../evidence/screenshots/policy-enforcement.png" alt="enforcement">
+      <div class="cap">Enforcement run — every action logged.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <h2>Live demo — the dashboard</h2>
+  <div class="grid g2" style="align-items:center">
+    <div class="fig">
+      <img src="../evidence/screenshots/dashboard-full.png" alt="dashboard">
+      <div class="cap">KPI strip, per-device cards, per-rule evidence, baseline table.</div>
+    </div>
+    <div>
+      <h3>What it answers</h3>
+      <ul>
+        <li>How many devices are compliant / at risk / non-compliant?</li>
+        <li>Which control is failing, and what value did the probe see?</li>
+        <li>What is the fleet average score?</li>
+      </ul>
+      <h3>Key finding</h3>
+      <p>Default devices fail <strong>5+ controls</strong> out of 8 — including the highest-weight ones (lock, debug, timeout).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <h2>The one control that bites back</h2>
+  <ul>
+    <li>USB debugging off (<code>adb_enabled=0</code>) <strong>instantly severs the management channel</strong> — device goes <code>offline</code>.</li>
+    <li>Remote re-enable is impossible by design (that is the point).</li>
+    <li>Recovery needs physical access / re-enrolment.</li>
+  </ul>
+  <h3>Recommendation</h3>
+  <ul>
+    <li><strong>Stage the rollout:</strong> apply all settings controls first, verify on the dashboard, then disable USB debugging last.</li>
+    <li>Run the collector on a schedule → detect drift, not just point-in-time audit.</li>
+    <li>Production: graduate from ADB to a Device Owner (DPC) enrolment so policy survives reboots cryptographically.</li>
+  </ul>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <h2>Conclusions</h2>
+  <ul>
+    <li>An effective MDM monitoring layer is buildable with <strong>open tools + ADB</strong>, no licence cost.</li>
+    <li>Most mobile risk is <strong>default misconfiguration</strong> — measurable and cheap to fix.</li>
+    <li>Evidence-backed scoring turns the dashboard into an <strong>audit artefact</strong>.</li>
+  </ul>
+  <h3>Deliverables</h3>
+  <ul>
+    <li>GitHub repository: collection + enforcement scripts, policy baseline, dashboard, evidence, 25-page report.</li>
+    <li>Printed report (15+ pages) following the prescribed structure.</li>
+  </ul>
+  <p style="margin-top:3vh" class="center">Thank you — questions welcome.</p>
+</section>
+
+<div class="hint">← / → to navigate · PgUp/PgDn · Esc overview</div>
+<div class="prog" id="prog"></div>
+
+<script>
+  var slides = document.querySelectorAll(".slide");
+  var idx = 0;
+  function show(n) {
+    idx = (n + slides.length) % slides.length;
+    slides.forEach(function (s, i) { s.classList.toggle("active", i === idx); });
+    document.getElementById("prog").textContent = (idx + 1) + " / " + slides.length;
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") show(idx + 1);
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "PageUp") show(idx - 1);
+    else if (e.key === "Escape") show(0);
+  });
+  document.addEventListener("click", function (e) { show(idx + 1); });
+  show(0);
+</script>
+</body>
+</html>
