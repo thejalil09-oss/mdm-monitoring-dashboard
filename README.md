@@ -2,6 +2,7 @@
 > Semester Project — Network Monitoring, Security and Auditing (Cyber Labwork II)
 
 **Author:** Sulemana Akuantu Abdul Jalil · **Index:** FCM.41.018.245.23 · **Team:** Blue
+**Repository:** https://github.com/thejalil09-oss/mdm-monitoring-dashboard
 
 A self-hosted Mobile Device Management (MDM) monitoring and compliance dashboard for an
 Android device fleet, driven entirely through the Android Debug Bridge (ADB). It collects
